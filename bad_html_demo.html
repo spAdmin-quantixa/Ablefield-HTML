@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Deliberately Non-Compliant Demo (508/WCAG Failures)</title>
+  <style>
+    /* FAIL: Low contrast (light gray on white) */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #cfcfcf; /* low contrast */
+      margin: 0;
+      padding: 0;
+      line-height: 1.4;
+    }
+
+    /* FAIL: Remove visible focus indicator */
+    *:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    header {
+      background: #f6f6f6;
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* FAIL: Link contrast + no underline */
+    a {
+      color: #d8d8d8;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* FAIL: “Button” that is a div, not keyboard accessible by default */
+    .fake-button {
+      display: inline-block;
+      background: #f3f3f3;
+      color: #d7d7d7; /* low contrast */
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      margin: 8px 0;
+      border: 1px solid #efefef;
+    }
+
+    /* FAIL: Modal overlay that traps interaction (and makes content behind still focusable) */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.8);
+      display: none;
+    }
+
+    .modal {
+      width: 420px;
+      max-width: calc(100% - 40px);
+      margin: 80px auto;
+      background: #ffffff;
+      border: 1px solid #eee;
+      border-radius: 14px;
+      padding: 16px;
+      color: #d0d0d0; /* still low contrast */
+    }
+
+    /* FAIL: Form controls with low contrast + placeholder-only labels */
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      background: #fafafa;
+      color: #d2d2d2; /* low contrast */
+    }
+
+    .cols {
+      display: flex;
+      gap: 18px;
+    }
+    .card {
+      flex: 1;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    /* FAIL: Tiny target / low contrast */
+    .tiny-close {
+      font-size: 10px;
+      color: #dedede;
+      cursor: pointer;
+      float: right;
+      padding: 2px 4px;
+    }
+
+    /* FAIL: Weird tab order via tabindex */
+    .tab-weird { margin-top: 12px; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <strong style="color:#333333;">Ablefield Assessment Demo</strong>
+      <span style="margin-left:12px;">
+        <a href="#main" style="color: #000000; background-color: #f6f6f6; padding: 5px; text-decoration: underline;">Skip to content</a>
+        <!-- FAIL: skip link doesn't actually help much if focus is not visible -->
+      </span>
+    </div>
+  </header>
+
+  <main id="main">
+    <h1 style="color:#d3d3d3;">Welcome</h1>
+
+    <!-- FAIL: Meaningful image missing alt -->
+    <img src="https://via.placeholder.com/860x200?text=Ablefield+Banner" alt="Ablefield Banner" />
+
+    <p>
+      This page is intentionally built to fail accessibility checks. It includes low contrast text, missing alt text,
+      poor focus visibility, and broken keyboard interactions.
+    </p>
+
+    <!-- FAIL: Clickable div, mouse-only handler; no role, no tabindex -->
+    <div class="fake-button" id="openModal">
+      Open “Settings” (click only)
+    </div>
+
+    <div class="cols">
+      <div class="card">
+        <h2 style="color:#d4d4d4;">Quick Actions</h2>
+
+        <!-- FAIL: Interactive div with role misused + tabindex jump -->
+        <div class="fake-button tab-weird" tabindex="5" id="mouseOnlyAction">
+          Mouse-only Action (won’t trigger via keyboard)
+        </div>
+
+        <!-- FAIL: Link that looks like text + low contrast -->
+        <p>
+          Need help? <a href="javascript:void(0)" onclick="alert('Help clicked')">Click here</a>
+        </p>
+      </div>
+
+      <div class="card">
+        <h2 style="color:#d4d4d4;">Profile</h2>
+
+        <!-- FAIL: Inputs without associated <label>; placeholder-only -->
+        <input type="text" placeholder="Full name" />
+        <input type="email" placeholder="Email address" />
+        <select>
+          <option>Choose role</option>
+          <option>Admin</option>
+          <option>User</option>
+        </select>
+
+        <!-- FAIL: Non-descriptive link text -->
+        <p><a href="javascript:void(0)">More</a></p>
+
+        <!-- FAIL: Empty alt on meaningful image -->
+        <img src="https://via.placeholder.com/200?text=User+Photo" alt="" />
+      </div>
+    </div>
+
+    <h2 style="color:#d4d4d4; margin-top: 24px;">Keyboard Trap Area</h2>
+
+    <!-- FAIL: tabindex out of logical order + no focus styles -->
+    <button tabindex="10" onclick="alert('Button clicked')">Primary Button</button>
+    <button tabindex="2" onclick="alert('Secondary clicked')">Secondary Button</button>
+    <a href="javascript:void(0)" tabindex="1" onclick="alert('Link activated')">Random Link First</a>
+
+    <p>
+      Try tabbing through the page. Focus is invisible, and tab order is intentionally strange.
+    </p>
+  </main>
+
+  <!-- Modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <span class="tiny-close" id="closeModal">close</span>
+      <h3 style="color:#d3d3d3;">Settings</h3>
+
+      <!-- FAIL: Missing labels again -->
+      <input type="password" placeholder="Password" />
+      <textarea placeholder="Notes"></textarea>
+
+      <!-- FAIL: Clickable div used as button -->
+      <div class="fake-button" id="saveSettings">Save (click only)</div>
+
+      <!-- FAIL: Image with missing alt -->
+      <img src="https://via.placeholder.com/380x120?text=Chart" />
+    </div>
+  </div>
+
+  <script>
+    // FAIL: Click-only interactions; no key handlers.
+    const overlay = document.getElementById('overlay');
+    document.getElementById('openModal').onclick = () => {
+      overlay.style.display = 'block';
+      // FAIL: No focus management; does not move focus into modal.
+    };
+
+    document.getElementById('closeModal').onclick = () => {
+      overlay.style.display = 'none';
+      // FAIL: No focus return to opener.
+    };
+
+    document.getElementById('saveSettings').onclick = () => {
+      alert('Saved (not really)');
+      overlay.style.display = 'none';
+    };
+
+    // FAIL: Poor “keyboard trap” — prevents tab from leaving when modal is open,
+    // but does so incorrectly (and without offering escape).
+    document.addEventListener('keydown', (e) => {
+      if (overlay.style.display === 'block' && e.key === 'Tab') {
+        e.preventDefault(); // traps keyboard users with no way out
+      }
+    });
+
+    // FAIL: Mouse-only action—explicitly ignore keyboard activation
+    document.getElementById('mouseOnlyAction').addEventListener('mousedown', () => {
+      alert('Mouse-only action executed');
+    });
+  </script>
+</body>
+</html>
+
+
+
